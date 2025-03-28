@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nowy kosmogram - Kalkulator Astrologii Wedyjskiej</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Tempus Dominus dla wyboru daty i czasu -->
+    <link href="https://cdn.jsdelivr.net/npm/@eonasdan/tempus-dominus@6.7.7/dist/css/tempus-dominus.min.css" rel="stylesheet">
+    <!-- Własne style -->
+    <link href="../css/main.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Nagłówek -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">
+                <i class="fas fa-moon"></i> Kalkulator Astrologii Wedyjskiej
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html">Strona główna</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="chart-form.html">Nowy kosmogram</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="chart-list.html">Lista kosmogramów</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Główna zawartość -->
+    <div class="container py-5">
+        <h1 class="mb-4">Nowy kosmogram</h1>
+        <p class="lead mb-4">Wprowadź dokładne dane urodzenia, aby utworzyć kosmogram wedyjski. Pamiętaj, że precyzja danych jest kluczowa dla poprawności obliczeń astrologicznych.</p>
+        
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <!-- Formularz nowego kosmogramu -->
+                <form id="birth-chart-form">
+                    <!-- Alert na błędy -->
+                    <div id="error-alert" class="alert alert-danger d-none" role="alert"></div>
+                    
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Imię i nazwisko</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="birth-date-time" class="form-label">Data i godzina urodzenia</label>
+                            <div class="input-group" id="datetimepicker">
+                                <input type="text" class="form-control" id="birth-date-time" required>
+                                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="latitude" class="form-label">Szerokość geograficzna</label>
+                            <input type="number" step="0.0001" class="form-control" id="latitude" name="latitude" placeholder="np. 50.0413" required>
+                            <div class="form-text">Wprowadź wartość dziesiętną (np. 50.0413 dla północy, -33.8688 dla południa)</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="longitude" class="form-label">Długość geograficzna</label>
+                            <input type="number" step="0.0001" class="form-control" id="longitude" name="longitude" placeholder="np. 19.9738" required>
+                            <div class="form-text">Wprowadź wartość dziesiętną (np. 19.9738 dla wschodu, -118.2437 dla zachodu)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="chart-list.html" class="btn btn-outline-secondary">Anuluj</a>
+                        <button type="submit" class="btn btn-primary" id="submit-btn">
+                            <span class="spinner-border spinner-border-sm d-none" id="submit-spinner" role="status" aria-hidden="true"></span>
+                            Utwórz kosmogram
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stopka -->
+    <footer class="bg-light py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">&copy; <span id="current-year"></span> Kalkulator Astrologii Wedyjskiej</p>
+            <p class="small text-muted">Wersja 1.0.0</p>
+        </div>
+    </footer>
+
+    <!-- jQuery i Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Moment.js i Tempus Dominus (Data i czas) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@eonasdan/tempus-dominus@6.7.7/dist/js/tempus-dominus.min.js"></script>
+    <!-- Własne skrypty -->
+    <script src="../js/api.js"></script>
+    <script src="../js/charts.js"></script>
+    <script>
+        // Aktualizacja roku w stopce
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+        
+        // Inicjalizacja kontrolki wyboru daty i czasu
+        const datetimepicker = new tempusDominus.TempusDominus(document.getElementById('datetimepicker'), {
+            display: {
+                components: {
+                    clock: true,
+                    date: true,
+                    month: true,
+                    year: true,
+                    hours: true,
+                    minutes: true,
+                    seconds: true
+                },
+                icons: {
+                    type: 'icons',
+                    time: 'fas fa-clock',
+                    date: 'fas fa-calendar',
+                    up: 'fas fa-arrow-up',
+                    down: 'fas fa-arrow-down',
+                    previous: 'fas fa-chevron-left',
+                    next: 'fas fa-chevron-right',
+                    today: 'fas fa-calendar-check',
+                    clear: 'fas fa-trash',
+                    close: 'fas fa-times'
+                }
+            },
+            localization: {
+                locale: 'pl',
+                format: 'DD.MM.YYYY HH:mm',
+            }
+        });
+        
+        // Obsługa formularza
+        $(document).ready(function() {
+            $('#birth-chart-form').on('submit', function(e) {
+                e.preventDefault();
+                
+                // Pokaż spinner i wyłącz przycisk
+                $('#submit-btn').prop('disabled', true);
+                $('#submit-spinner').removeClass('d-none');
+                $('#error-alert').addClass('d-none');
+                
+                // Zbierz dane z formularza
+                const name = $('#name').val();
+                const birthDateTimeStr = $('#birth-date-time').val();
+                const latitude = parseFloat($('#latitude').val());
+                const longitude = parseFloat($('#longitude').val());
+                
+                // Konwertuj datę do formatu ISO
+                const birthDateTime = moment(birthDateTimeStr, 'DD.MM.YYYY HH:mm').format('YYYY-MM-DDTHH:mm:00');
+                
+                // Walidacja
+                if (!name || !birthDateTime || isNaN(latitude) || isNaN(longitude)) {
+                    showError('Proszę wypełnić wszystkie pola formularza.');
+                    return;
+                }
+                
+                // Dane do wysłania
+                const chartData = {
+                    name: name,
+                    birth_date: birthDateTime,
+                    latitude: latitude,
+                    longitude: longitude
+                };
+                
+                // Wywołaj API
+                createChart(chartData)
+                    .then(response => {
+                        // Przekieruj do szczegółów kosmogramu
+                        window.location.href = `chart-detail.html?id=${response.chart_id}`;
+                    })
+                    .catch(error => {
+                        console.error('Error creating chart:', error);
+                        showError(error.message || 'Wystąpił błąd podczas tworzenia kosmogramu. Spróbuj ponownie.');
+                    })
+                    .finally(() => {
+                        // Ukryj spinner i włącz przycisk
+                        $('#submit-btn').prop('disabled', false);
+                        $('#submit-spinner').addClass('d-none');
+                    });
+            });
+            
+            function showError(message) {
+                $('#error-alert').text(message).removeClass('d-none');
+                $('#submit-btn').prop('disabled', false);
+                $('#submit-spinner').addClass('d-none');
+            }
+        });
+    </script>
+</body>
+</html>

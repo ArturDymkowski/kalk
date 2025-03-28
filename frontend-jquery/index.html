@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Astrologii Wedyjskiej</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Własne style -->
+    <link href="css/main.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Nagłówek -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-moon"></i> Kalkulator Astrologii Wedyjskiej
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">Strona główna</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="pages/chart-form.html">Nowy kosmogram</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="pages/chart-list.html">Lista kosmogramów</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Główna zawartość -->
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold text-primary">Kalkulator Astrologii Wedyjskiej</h1>
+            <p class="lead">Odkryj swój los zapisany w gwiazdach dzięki precyzyjnym obliczeniom astrologicznym</p>
+        </div>
+
+        <div class="row mb-5">
+            <div class="col-md-6 offset-md-3">
+                <div class="d-grid gap-2">
+                    <a href="pages/chart-form.html" class="btn btn-primary btn-lg">
+                        <i class="fas fa-plus-circle me-2"></i> Nowy kosmogram
+                    </a>
+                    <a href="pages/chart-list.html" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-list me-2"></i> Lista kosmogramów
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sekcja funkcji -->
+        <h2 class="text-center mb-4">Główne funkcje</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="display-1 my-3 text-primary">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <h5 class="card-title">Kosmogramy i Vargi</h5>
+                        <p class="card-text">Obliczanie dokładnych kosmogramów D1-D12 według zasad klasycznej astrologii wedyjskiej.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="display-1 my-3 text-primary">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <h5 class="card-title">Analiza obszarów życia</h5>
+                        <p class="card-text">Szczegółowa analiza różnych obszarów życia: zdrowia, finansów, związków, kariery i talentów.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="display-1 my-3 text-primary">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h5 class="card-title">Sztuczna inteligencja</h5>
+                        <p class="card-text">Wykorzystanie AI do profesjonalnej interpretacji Twojego kosmogramu wedyjskiego.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Jak to działa -->
+        <div class="my-5">
+            <h2 class="text-center mb-4">Jak to działa?</h2>
+            <div class="row text-center">
+                <div class="col-md-4 mb-4">
+                    <div class="p-3">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex justify-content-center align-items-center mb-3" style="width: 60px; height: 60px;">
+                            <h2 class="m-0">1</h2>
+                        </div>
+                        <h5>Wprowadź dane urodzenia</h5>
+                        <p>Podaj swoją datę, godzinę i miejsce urodzenia, aby otrzymać precyzyjny kosmogram.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="p-3">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex justify-content-center align-items-center mb-3" style="width: 60px; height: 60px;">
+                            <h2 class="m-0">2</h2>
+                        </div>
+                        <h5>Sprawdź swój kosmogram</h5>
+                        <p>Przeglądaj 12 różnych varg (D1-D12) przedstawiających różne aspekty Twojego życia.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="p-3">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex justify-content-center align-items-center mb-3" style="width: 60px; height: 60px;">
+                            <h2 class="m-0">3</h2>
+                        </div>
+                        <h5>Wykonaj analizę</h5>
+                        <p>Wybierz interesujący Cię obszar życia i otrzymaj szczegółową analizę opartą na Twoim kosmogramie.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stopka -->
+    <footer class="bg-light py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">&copy; <span id="current-year"></span> Kalkulator Astrologii Wedyjskiej</p>
+            <p class="small text-muted">Wersja 1.0.0</p>
+        </div>
+    </footer>
+
+    <!-- jQuery i Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Własne skrypty -->
+    <script src="js/main.js"></script>
+    <script>
+        // Aktualizacja roku w stopce
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>

@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analiza kosmogramu - Kalkulator Astrologii Wedyjskiej</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Własne style -->
+    <link href="../css/main.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Nagłówek -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">
+                <i class="fas fa-moon"></i> Kalkulator Astrologii Wedyjskiej
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html">Strona główna</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="chart-form.html">Nowy kosmogram</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="chart-list.html">Lista kosmogramów</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Główna zawartość -->
+    <div class="container py-5">
+        <!-- Przycisk powrotu i nagłówek -->
+        <div class="mb-4">
+            <div id="chart-back-button">
+                <a href="#" class="btn btn-outline-primary mb-2">
+                    <i class="fas fa-chevron-left me-2"></i> Powrót do kosmogramu
+                </a>
+            </div>
+            <h1>Analiza kosmogramu</h1>
+            <p id="chart-name" class="lead"></p>
+        </div>
+        
+        <!-- Alert na błędy -->
+        <div id="error-alert" class="alert alert-danger d-none" role="alert"></div>
+        
+        <!-- Loader -->
+        <div id="loader" class="text-center my-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Ładowanie...</span>
+            </div>
+            <p class="mt-2">Ładowanie danych kosmogramu...</p>
+        </div>
+        
+        <!-- Formularz analizy -->
+        <div id="analysis-form-container" class="card mb-4 d-none">
+            <div class="card-body">
+                <h5 class="card-title">Wybierz obszar życia do analizy</h5>
+                
+                <form id="analysis-form" class="mt-3">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-8">
+                            <label for="life-area" class="form-label">Obszar życia</label>
+                            <select class="form-select" id="life-area" required>
+                                <option value="" selected disabled>Wybierz obszar życia...</option>
+                                <!-- Opcje będą dodane przez JavaScript -->
+                            </select>
+                            <div class="form-text" id="life-area-description"></div>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary w-100" id="analyze-button">
+                                <span class="spinner-border spinner-border-sm d-none" id="analyze-spinner" role="status" aria-hidden="true"></span>
+                                <i class="fas fa-chart-line me-2"></i> Analizuj
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Wyniki analizy -->
+        <div id="analysis-result" class="card mb-4 d-none">
+            <div class="card-body">
+                <h5 class="card-title" id="analysis-title">Wynik analizy</h5>
+                <div class="text-muted mb-3" id="analysis-date"></div>
+                
+                <hr>
+                
+                <div id="analysis-content" class="mt-3"></div>
+            </div>
+        </div>
+        
+        <!-- Lista analiz -->
+        <div class="row mt-5">
+            <div class="col-md-4">
+                <!-- Lista poprzednich analiz -->
+                <div id="analyses-list-container" class="card d-none">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Poprzednie analizy</h5>
+                    </div>
+                    <div class="list-group list-group-flush" id="analyses-list">
+                        <!-- Lista analiz będzie dodana przez JavaScript -->
+                    </div>
+                </div>
+                
+                <!-- Brak analiz -->
+                <div id="no-analyses" class="card d-none">
+                    <div class="card-body">
+                        <h5 class="card-title">Brak analiz</h5>
+                        <p class="card-text">Ten kosmogram nie ma jeszcze przeprowadzonych analiz.</p>
+                    </div>
+                </div>
+                
+                <!-- Loader dla listy -->
+                <div id="list-loader" class="text-center my-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Ładowanie...</span>
+                    </div>
+                    <p class="mt-2">Pobieranie analiz...</p>
+                </div>
+            </div>
+            
+            <div class="col-md-8">
+                <!-- Wybierz analizę -->
+                <div id="select-analysis-message" class="card text-center d-none">
+                    <div class="card-body py-5">
+                        <h5 class="card-title">Wybierz analizę</h5>
+                        <p class="card-text">Wybierz analizę z listy lub wykonaj nową analizę kosmogramu.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stopka -->
+    <footer class="bg-light py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">&copy; <span id="current-year"></span> Kalkulator Astrologii Wedyjskiej</p>
+            <p class="small text-muted">Wersja 1.0.0</p>
+        </div>
+    </footer>
+
+    <!-- jQuery i Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Moment.js dla formatowania dat -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/locale/pl.js"></script>
+    <!-- Własne skrypty -->
+    <script src="../js/api.js"></script>
+    <script src="../js/charts.js"></script>
+    <script src="../js/analysis.js"></script>
+    <script>
+        // Aktualizacja roku w stopce
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+        
+        // Po załadowaniu dokumentu
+        $(document).ready(function() {
+            // Pobierz ID kosmogramu z URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const chartId = urlParams.get('id');
+            
+            if (!chartId) {
+                // Brak ID kosmogramu
+                showError('Brak identyfikatora kosmogramu.');
+                return;
+            }
+            
+            // Ustaw link powrotu do kosmogramu
+            $('#chart-back-button a').attr('href', `chart-detail.html?id=${chartId}`);
+            
+            // Pobierz dane kosmogramu i obszary życia
+            loadInitialData(chartId);
+            
+            function loadInitialData(chartId) {
+                // Ukryj elementy UI i pokaż loader
+                $('#analysis-form-container, #analysis-result, #analyses-list-container, #no-analyses, #select-analysis-message').addClass('d-none');
+                $('#loader, #list-loader').removeClass('d-none');
+                
+                // Pobierz dane kosmogramu i obszary życia równolegle
+                Promise.all([
+                    getChart(chartId),
+                    getLifeAreas(),
+                    getChartAnalyses(chartId)
+                ])
+                .then(([chart, lifeAreas, analyses]) => {
+                    // Ukryj loadery
+                    $('#loader, #list-loader').addClass('d-none');
+                    
+                    // Ustaw nazwę kosmogramu
+                    $('#chart-name').text(chart.name);
+                    
+                    // Pokaż formularz analizy
+                    $('#analysis-form-container').removeClass('d-none');
+                    
+                    // Wypełnij select z obszarami życia
+                    fillLifeAreasSelect(lifeAreas);
+                    
+                    // Obsłuż analizy
+                    handleAnalyses(analyses);
+                    
+                    // Pokaż komunikat o wyborze analizy
+                    $('#select-analysis-message').removeClass('d-none');
+                })
+                .catch(error => {
+                    // Ukryj loadery i pokaż błąd
+                    $('#loader, #list-loader').addClass('d-none');
+                    showError(error.message || 'Nie udało się pobrać danych. Spróbuj odświeżyć stronę.');
+                    console.error('Error loading data:', error);
+                });
+            }
+            
+            function fillLifeAreasSelect(lifeAreas) {
+                const $select = $('#life-area');
+                
+                // Wyczyść select
+                $select.find('option:not(:first)').remove();
+                
+                // Dodaj opcje obszarów życia
+                lifeAreas.forEach(area => {
+                    $select.append(`<option value="${area.id}" data-description="${area.description}">${area.name} (${area.varga_combination})</option>`);
+                });
+                
+                // Obsłuż zmianę wyboru obszaru życia
+                $select.on('change', function() {
+                    const $selectedOption = $select.find('option:selected');
+                    const description = $selectedOption.data('description');
+                    
+                    // Pokaż opis wybranego obszaru
+                    $('#life-area-description').text(description || '');
+                });
+            }
+            
+            function handleAnalyses(analyses) {
+                if (analyses.length === 0) {
+                    // Brak analiz
+                    $('#no-analyses').removeClass('d-none');
+                } else {
+                    // Pokaż listę analiz
+                    $('#analyses-list-container').removeClass('d-none');
+                    renderAnalysesList(analyses);
+                }
+            }
+            
+            function renderAnalysesList(analyses) {
+                const $analysesList = $('#analyses-list');
+                $analysesList.empty();
+                
+                analyses.forEach(analysis => {
+                    // Formatuj datę
+                    const analysisDate = moment(analysis.created_at).format('D MMMM YYYY');
+                    
+                    // Utwórz element listy
+                    const analysisItem = `
+                        <a href="#" class="list-group-item list-group-item-action" data-analysis-id="${analysis.id}">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">${analysis.life_area_name}</h6>
+                                <small>${analysisDate}</small>
+                            </div>
+                        </a>
+                    `;
+                    
+                    $analysesList.append(analysisItem);
+                });
+                
+                // Obsłuż kliknięcie w analizę
+                $analysesList.find('a').on('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Usuń klasę active z wszystkich elementów
+                    $analysesList.find('a').removeClass('active');
+                    
+                    // Dodaj klasę active do klikniętego elementu
+                    $(this).addClass('active');
+                    
+                    // Pobierz analizę
+                    const analysisId = $(this).data('analysis-id');
+                    loadAnalysis(analysisId);
+                });
+            }
+            
+            function loadAnalysis(analysisId) {
+                // Ukryj komunikat o wyborze analizy
+                $('#select-analysis-message').addClass('d-none');
+                
+                // Pokaż loader w miejscu wyników
+                $('#analysis-result').addClass('d-none');
+                
+                // Pobierz analizę
+                getAnalysis(analysisId)
+                    .then(analysis => {
+                        // Pokaż wyniki analizy
+                        renderAnalysisResult(analysis);
+                    })
+                    .catch(error => {
+                        // Pokaż błąd
+                        showError(error.message || 'Nie udało się pobrać analizy.');
+                        console.error('Error loading analysis:', error);
+                    });
+            }
+            
+            function renderAnalysisResult(analysis) {
+                // Ustaw tytuł
+                $('#analysis-title').text(`Analiza: ${analysis.life_area_name}`);
+                
+                // Formatuj datę
+                const analysisDate = moment(analysis.created_at).format('D MMMM YYYY [o] HH:mm');
+                $('#analysis-date').text(`Analiza wykonana: ${analysisDate}`);
+                
+                // Ustaw treść analizy - zamień znaki nowej linii na znaczniki <p>
+                const content = analysis.analysis_result
+                    .split('\n\n')
+                    .map(paragraph => paragraph.trim())
+                    .filter(paragraph => paragraph.length > 0)
+                    .map(paragraph => `<p>${paragraph}</p>`)
+                    .join('');
+                
+                $('#analysis-content').html(content);
+                
+                // Pokaż wyniki analizy
+                $('#analysis-result').removeClass('d-none');
+            }
+            
+            // Obsługa formularza analizy
+            $('#analysis-form').on('submit', function(e) {
+                e.preventDefault();
+                
+                // Pobierz wybrany obszar życia
+                const lifeAreaId = $('#life-area').val();
+                
+                if (!lifeAreaId) {
+                    return;
+                }
+                
+                // Pokaż spinner i wyłącz przycisk
+                $('#analyze-button').prop('disabled', true);
+                $('#analyze-spinner').removeClass('d-none');
+                
+                // Ukryj komunikat o wyborze analizy i wyniki poprzedniej analizy
+                $('#select-analysis-message, #analysis-result').addClass('d-none');
+                
+                // Wykonaj analizę
+                analyzeChart(chartId, lifeAreaId)
+                    .then(result => {
+                        // Pobierz pełne dane analizy
+                        return getAnalysis(result.analysis_id);
+                    })
+                    .then(analysis => {
+                        // Pokaż wyniki analizy
+                        renderAnalysisResult(analysis);
+                        
+                        // Odśwież listę analiz
+                        return getChartAnalyses(chartId);
+                    })
+                    .then(analyses => {
+                        // Zaktualizuj listę analiz
+                        handleAnalyses(analyses);
+                    })
+                    .catch(error => {
+                        // Pokaż błąd
+                        showError(error.message || 'Analiza nie powiodła się. Spróbuj ponownie.');
+                        console.error('Analysis failed:', error);
+                    })
+                    .finally(() => {
+                        // Ukryj spinner i odblokuj przycisk
+                        $('#analyze-button').prop('disabled', false);
+                        $('#analyze-spinner').addClass('d-none');
+                    });
+            });
+            
+            function showError(message) {
+                $('#error-alert').text(message).removeClass('d-none');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+/* Globalne style */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #f8f9fa;
+}
+
+.navbar-brand {
+    font-weight: 600;
+}
+
+footer {
+    margin-top: auto;
+}
+
+/* Dostosowanie kolorów Bootstrapa */
+:root {
+    --bs-primary: #673ab7;
+    --bs-primary-rgb: 103, 58, 183;
+    --bs-primary-hover: #5e35b1;
+}
+
+.btn-primary {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+    background-color: var(--bs-primary-hover) !important;
+    border-color: var(--bs-primary-hover) !important;
+}
+
+.btn-outline-primary {
+    color: var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:active {
+    background-color: var(--bs-primary) !important;
+    border-color: var(--bs-primary) !important;
+}
+
+.bg-primary {
+    background-color: var(--bs-primary) !important;
+}
+
+.text-primary {
+    color: var(--bs-primary) !important;
+}
+
+.nav-link.active {
+    color: var(--bs-primary) !important;
+    font-weight: 600;
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--bs-primary) !important;
+    border-color: #dee2e6 #dee2e6 #fff;
+}
+
+/* Stylowanie formularzy */
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+/* Animacja dla spinnerów */
+.spinner-border {
+    border-right-color: transparent;
+}
+
+/* Style dla kart */
+.card {
+    border-radius: 0.5rem;
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.card-header {
+    background-color: rgba(var(--bs-primary-rgb), 0.05);
+    border-bottom: 1px solid rgba(var(--bs-primary-rgb), 0.1);
+}
+
+/* Style dla list */
+.list-group-item-action:hover {
+    background-color: rgba(var(--bs-primary-rgb), 0.05);
+}
+
+.list-group-item-action.active {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+
+/* Rozdzielacze treści */
+hr {
+    opacity: 0.15;
+    margin: 1.5rem 0;
+}
+
+/* Spacje dla sekcji */
+section {
+    margin-bottom: 3rem;
+}
+
+/* Stylowanie tekstu analizy */
+#analysis-content p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+#analysis-content p:last-child {
+    margin-bottom: 0;
+}
+
+/* Responsywność */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.8rem;
+    }
+    
+    .vedic-chart {
+        height: 300px;
+    }
+}

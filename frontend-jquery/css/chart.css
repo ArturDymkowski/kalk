@@ -1,0 +1,159 @@
+/* Style dla wizualizacji kosmogramu */
+.vedic-chart {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 2px;
+    height: 400px;
+    width: 100%;
+    background-color: #f5f5f5;
+    padding: 2px;
+    margin-bottom: 10px;
+}
+
+.chart-cell {
+    position: relative;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-cell-empty {
+    background-color: #f5f5f5;
+    border: none;
+}
+
+.chart-cell-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.chart-house-number {
+    font-size: 0.7rem;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.chart-sign {
+    font-weight: bold;
+    margin-bottom: 4px;
+    font-size: 0.9rem;
+}
+
+.chart-planets {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex-grow: 1;
+}
+
+.chart-planet {
+    display: flex;
+    align-items: center;
+    font-size: 0.8rem;
+    padding: 2px 4px;
+    border-radius: 4px;
+    margin-bottom: 2px;
+    border: 1px solid;
+}
+
+/* Kolory planet */
+.planet-sun, .planet-ascendant {
+    color: #FFA500;
+    border-color: #FFA500;
+}
+
+.planet-moon {
+    color: #708090;
+    border-color: #708090;
+}
+
+.planet-mercury {
+    color: #32CD32;
+    border-color: #32CD32;
+}
+
+.planet-venus {
+    color: #BA55D3;
+    border-color: #BA55D3;
+}
+
+.planet-mars {
+    color: #FF0000;
+    border-color: #FF0000;
+}
+
+.planet-jupiter {
+    color: #DAA520;
+    border-color: #DAA520;
+}
+
+.planet-saturn {
+    color: #000080;
+    border-color: #000080;
+}
+
+.planet-rahu {
+    color: #800080;
+    border-color: #800080;
+}
+
+.planet-ketu {
+    color: #800080;
+    border-color: #800080;
+}
+
+/* Ikony planet w tabeli */
+.planet-icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    margin-right: 5px;
+    vertical-align: text-bottom;
+}
+
+.planet-icon.planet-sun {
+    background-color: #FFA500;
+}
+
+.planet-icon.planet-moon {
+    background-color: #708090;
+}
+
+.planet-icon.planet-mercury {
+    background-color: #32CD32;
+}
+
+.planet-icon.planet-venus {
+    background-color: #BA55D3;
+}
+
+.planet-icon.planet-mars {
+    background-color: #FF0000;
+}
+
+.planet-icon.planet-jupiter {
+    background-color: #DAA520;
+}
+
+.planet-icon.planet-saturn {
+    background-color: #000080;
+}
+
+.planet-icon.planet-rahu {
+    background-color: #800080;
+}
+
+.planet-icon.planet-ketu {
+    background-color: #800080;
+}
+
+.planet-icon.planet-ascendant {
+    background-color: #FFA500;
+    border-radius: 0;
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}

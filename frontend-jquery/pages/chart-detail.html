@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Szczegóły kosmogramu - Kalkulator Astrologii Wedyjskiej</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Własne style -->
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/chart.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Nagłówek -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">
+                <i class="fas fa-moon"></i> Kalkulator Astrologii Wedyjskiej
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html">Strona główna</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="chart-form.html">Nowy kosmogram</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="chart-list.html">Lista kosmogramów</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Główna zawartość -->
+    <div class="container py-5">
+        <!-- Przycisk powrotu i nagłówek -->
+        <div class="d-flex justify-content-between align-items-start mb-4">
+            <div>
+                <a href="chart-list.html" class="btn btn-outline-primary mb-2">
+                    <i class="fas fa-chevron-left me-2"></i> Powrót do listy
+                </a>
+                <h1 id="chart-name">Szczegóły kosmogramu</h1>
+                <p id="chart-birth-date" class="text-muted"></p>
+            </div>
+            <a id="analyze-button" href="#" class="btn btn-primary">
+                <i class="fas fa-chart-line me-2"></i> Analizuj kosmogram
+            </a>
+        </div>
+        
+        <!-- Alert na błędy -->
+        <div id="error-alert" class="alert alert-danger d-none" role="alert"></div>
+        
+        <!-- Loader -->
+        <div id="loader" class="text-center my-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Ładowanie...</span>
+            </div>
+            <p class="mt-2">Pobieranie szczegółów kosmogramu...</p>
+        </div>
+        
+        <!-- Szczegóły kosmogramu -->
+        <div id="chart-details" class="d-none">
+            <!-- Podstawowe informacje -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Data i godzina urodzenia</h6>
+                            <p id="chart-birth-info" class="mb-0"></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Współrzędne geograficzne</h6>
+                            <p id="chart-coords" class="mb-0"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tabs dla różnych varg -->
+            <ul class="nav nav-tabs" id="vargasTabs" role="tablist"></ul>
+            
+            <div class="tab-content p-3 border border-top-0 rounded-bottom mb-4" id="vargasTabContent"></div>
+        </div>
+    </div>
+
+    <!-- Stopka -->
+    <footer class="bg-light py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">&copy; <span id="current-year"></span> Kalkulator Astrologii Wedyjskiej</p>
+            <p class="small text-muted">Wersja 1.0.0</p>
+        </div>
+    </footer>
+
+    <!-- jQuery i Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Moment.js dla formatowania dat -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/locale/pl.js"></script>
+    <!-- Własne skrypty -->
+    <script src="../js/api.js"></script>
+    <script src="../js/charts.js"></script>
+    <script src="../js/utils.js"></script>
+    <script>
+        // Aktualizacja roku w stopce
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+        
+        // Po załadowaniu dokumentu
+        $(document).ready(function() {
+            // Pobierz ID kosmogramu z URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const chartId = urlParams.get('id');
+            
+            if (!chartId) {
+                // Brak ID kosmogramu
+                showError('Brak identyfikatora kosmogramu.');
+                return;
+            }
+            
+            // Zaktualizuj link do analizy
+            $('#analyze-button').attr('href', `analysis.html?id=${chartId}`);
+            
+            // Pobierz szczegóły kosmogramu
+            loadChartDetails(chartId);
+            
+            function loadChartDetails(chartId) {
+                // Pokaż loader
+                $('#loader').removeClass('d-none');
+                $('#chart-details').addClass('d-none');
+                $('#error-alert').addClass('d-none');
+                
+                // Pobierz szczegóły kosmogramu
+                getChart(chartId)
+                    .then(chart => {
+                        // Ukryj loader
+                        $('#loader').addClass('d-none');
+                        
+                        // Pokaż szczegóły kosmogramu
+                        $('#chart-details').removeClass('d-none');
+                        renderChartDetails(chart);
+                    })
+                    .catch(error => {
+                        // Ukryj loader i pokaż błąd
+                        $('#loader').addClass('d-none');
+                        showError(error.message || 'Nie udało się pobrać szczegółów kosmogramu.');
+                        console.error('Error loading chart details:', error);
+                    });
+            }
+            
+            function renderChartDetails(chart) {
+                // Ustaw podstawowe informacje
+                $('#chart-name').text(chart.name);
+                
+                // Formatuj datę
+                const birthDate = moment(chart.birth_date).format('D MMMM YYYY [o] HH:mm');
+                $('#chart-birth-date').text(birthDate);
+                $('#chart-birth-info').text(birthDate);
+                
+                // Współrzędne
+                $('#chart-coords').text(`Szerokość: ${chart.latitude.toFixed(4)}, Długość: ${chart.longitude.toFixed(4)}`);
+                
+                // Renderuj zakładki dla varg
+                renderVargaTabs(chart);
+            }
+            
+            function renderVargaTabs(chart) {
+                const vargaTabs = [
+                    { id: 'D1', label: 'D1 - Rashi', description: 'Główna mapa życia' },
+                    { id: 'D2', label: 'D2 - Hora', description: 'Bogactwo i finanse' },
+                    { id: 'D3', label: 'D3 - Drekkana', description: 'Rodzeństwo i motywacja' },
+                    { id: 'D4', label: 'D4 - Chaturtamsa', description: 'Nieruchomości i luksus' },
+                    { id: 'D5', label: 'D5 - Panchamsa', description: 'Kreatywność i zasługi' },
+                    { id: 'D6', label: 'D6 - Shashtamsa', description: 'Zdrowie i choroby' },
+                    { id: 'D7', label: 'D7 - Saptamsa', description: 'Dzieci i płodność' },
+                    { id: 'D8', label: 'D8 - Ashtamsa', description: 'Nagłe zmiany, transformacje' },
+                    { id: 'D9', label: 'D9 - Navamsa', description: 'Związki i dharma' },
+                    { id: 'D10', label: 'D10 - Dasamsa', description: 'Kariera i sukces zawodowy' },
+                    { id: 'D11', label: 'D11 - Ekadasamsa', description: 'Przyjaciele i zyski' },
+                    { id: 'D12', label: 'D12 - Dvadasamsa', description: 'Rodzice i karma rodowa' }
+                ];
+                
+                const $tabsList = $('#vargasTabs');
+                const $tabContent = $('#vargasTabContent');
+                
+                $tabsList.empty();
+                $tabContent.empty();
+                
+                vargaTabs.forEach((varga, index) => {
+                    // Tworzenie zakładki
+                    const tabItem = `
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link ${index === 0 ? 'active' : ''}" 
+                                id="${varga.id}-tab" 
+                                data-bs-toggle="tab" 
+                                data-bs-target="#${varga.id}-content" 
+                                type="button" 
+                                role="tab"
+                                aria-controls="${varga.id}-content" 
+                                aria-selected="${index === 0}">
+                                ${varga.label}
+                            </button>
+                        </li>
+                    `;
+                    
+                    $tabsList.append(tabItem);
+                    
+                    // Sprawdź czy dane vargi są dostępne
+                    const vargaData = chart.vargas && chart.vargas[varga.id];
+                    
+                    // Tworzenie zawartości zakładki
+                    let tabContent;
+                    
+                    if (vargaData) {
+                        tabContent = `
+                            <div class="tab-pane fade ${index === 0 ? 'show active' : ''}" 
+                                id="${varga.id}-content" 
+                                role="tabpanel" 
+                                aria-labelledby="${varga.id}-tab">
+                                
+                                <div class="mb-3">
+                                    <h5>${varga.label}</h5>
+                                    <p class="text-muted">${varga.description}</p>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="chart-visualization" id="${varga.id}-chart">
+                                            <!-- Tutaj będzie renderowana wizualizacja kosmogramu -->
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="mb-3">Pozycje planet</h6>
+                                        <div class="table-responsive">
+                                            <table class="table table-sm table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Planeta</th>
+                                                        <th>Znak</th>
+                                                        <th>Pozycja</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="${varga.id}-planets">
+                                                    <!-- Tutaj będą renderowane pozycje planet -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        tabContent = `
+                            <div class="tab-pane fade ${index === 0 ? 'show active' : ''}" 
+                                id="${varga.id}-content" 
+                                role="tabpanel" 
+                                aria-labelledby="${varga.id}-tab">
+                                
+                                <div class="text-center py-4">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Ładowanie...</span>
+                                    </div>
+                                    <p class="mt-2">Ładowanie danych vargi...</p>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    $tabContent.append(tabContent);
+                    
+                    // Jeśli dane vargi są dostępne, wypełnij tabelę planet
+                    if (vargaData) {
+                        // Renderuj planety
+                        renderPlanets(varga.id, vargaData.planets);
+                        
+                        // Renderuj wizualizację kosmogramu
+                        renderChartVisualization(varga.id, vargaData);
+                    }
+                });
+            }
+            
+            function renderPlanets(vargaId, planets) {
+                const $planetsTable = $(`#${vargaId}-planets`);
+                $planetsTable.empty();
+                
+                // Sortuj planety w określonej kolejności
+                const planetOrder = [
+                    'Ascendant', 'Sun', 'Moon', 'Mercury', 
+                    'Venus', 'Mars', 'Jupiter', 'Saturn', 
+                    'Rahu', 'Ketu'
+                ];
+                
+                // Planety po polsku
+                const planetNames = {
+                    'Ascendant': 'Ascendent',
+                    'Sun': 'Słońce',
+                    'Moon': 'Księżyc',
+                    'Mercury': 'Merkury',
+                    'Venus': 'Wenus',
+                    'Mars': 'Mars',
+                    'Jupiter': 'Jowisz',
+                    'Saturn': 'Saturn',
+                    'Rahu': 'Rahu',
+                    'Ketu': 'Ketu'
+                };
+                
+                // Iteruj po planetach w określonej kolejności
+                planetOrder.forEach(planetKey => {
+                    if (planets[planetKey]) {
+                        const planet = planets[planetKey];
+                        const row = `
+                            <tr>
+                                <td>
+                                    <span class="planet-icon planet-${planetKey.toLowerCase()}"></span>
+                                    ${planetNames[planetKey] || planetKey}
+                                </td>
+                                <td>${planet.sign_name}</td>
+                                <td>${planet.degrees_in_sign.toFixed(2)}°</td>
+                            </tr>
+                        `;
+                        $planetsTable.append(row);
+                    }
+                });
+            }
+            
+            function renderChartVisualization(vargaId, vargaData) {
+                const $chartContainer = $(`#${vargaId}-chart`);
+                
+                // Znaki zodiaku w kolejności od Barana do Ryb
+                const zodiacSigns = [
+                    'Baran', 'Byk', 'Bliźnięta', 'Rak', 
+                    'Lew', 'Panna', 'Waga', 'Skorpion', 
+                    'Strzelec', 'Koziorożec', 'Wodnik', 'Ryby'
+                ];
+                
+                // Przygotuj dane planet
+                const planetsInSigns = {};
+                
+                // Inicjalizuj puste tablice dla każdego znaku
+                zodiacSigns.forEach((sign, i) => {
+                    planetsInSigns[i] = [];
+                });
+                
+                // Skrócone nazwy planet do wyświetlania w kosmogramie
+                const planetAbbreviations = {
+                    'Ascendant': 'Asc',
+                    'Sun': 'Su',
+                    'Moon': 'Mo',
+                    'Mercury': 'Me',
+                    'Venus': 'Ve',
+                    'Mars': 'Ma',
+                    'Jupiter': 'Ju',
+                    'Saturn': 'Sa',
+                    'Rahu': 'Ra',
+                    'Ketu': 'Ke'
+                };
+                
+                // Dodaj planety do odpowiednich znaków
+                Object.entries(vargaData.planets).forEach(([planet, data]) => {
+                    if (planetsInSigns[data.sign] !== undefined) {
+                        planetsInSigns[data.sign].push({
+                            name: planet,
+                            abbr: planetAbbreviations[planet] || planet.substring(0, 2),
+                            degrees: data.degrees_in_sign
+                        });
+                    }
+                });
+                
+                // Układ domów w siatce południowoindyjskiej (South Indian style)
+                // Indeksy odnoszą się do znaków zodiaku (0-11)
+                const houseLayout = [
+                    8, 9, 10, 11, // Górny rząd: Dom 9, 10, 11, 12
+                    7, null, null, 0, // Środkowy rząd: Dom 8, -, -, Dom 1
+                    6, 5, 4, 3, // Dolny rząd: Dom 7, 6, 5, 4
+                ];
+                
+                // Tworzenie wizualizacji kosmogramu
+                let chartHtml = '<div class="vedic-chart">';
+                
+                // Iteruj po układzie domów
+                houseLayout.forEach((signIndex, i) => {
+                    if (signIndex === null) {
+                        // Puste miejsce w środku kosmogramu
+                        chartHtml += '<div class="chart-cell chart-cell-empty"></div>';
+                    } else {
+                        const houseNumber = (signIndex + 1) % 12 || 12; // Przekształcenie indeksu znaku na numer domu (1-12)
+                        const planets = planetsInSigns[signIndex] || [];
+                        
+                        chartHtml += `
+                            <div class="chart-cell">
+                                <div class="chart-cell-content">
+                                    <div class="chart-house-number">Dom ${houseNumber}</div>
+                                    <div class="chart-sign">${zodiacSigns[signIndex]}</div>
+                                    <div class="chart-planets">
+                        `;
+                        
+                        // Dodaj planety
+                        planets.forEach(planet => {
+                            chartHtml += `
+                                <div class="chart-planet planet-${planet.name.toLowerCase()}">
+                                    ${planet.abbr} ${planet.degrees.toFixed(1)}°
+                                </div>
+                            `;
+                        });
+                        
+                        chartHtml += `
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+                
+                chartHtml += '</div>';
+                
+                // Dodaj legendę
+                chartHtml += `
+                    <div class="chart-info mt-2 text-center">
+                        <small class="text-muted">Wizualizacja w stylu południowoindyjskim</small>
+                    </div>
+                `;
+                
+                $chartContainer.html(chartHtml);
+            }
+            
+            function showError(message) {
+                $('#error-alert').text(message).removeClass('d-none');
+                $('#loader').addClass('d-none');
+            }
+        });
+    </script>
+</body>
+</html>
